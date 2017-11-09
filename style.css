@@ -1,0 +1,157 @@
+@keyframes blinker {
+    50% {
+        opacity: 0;
+    }
+}
+
+@font-face {
+    font-family: AlphaSmart3000;
+    src: local("AlphaSmart3000"), local("AlphaSmart3000"), url(AlphaSmart3000.ttf);
+    font-weight: bold;
+}
+
+body {
+    background-color: black;
+    color: rgb(216, 216, 216);
+}
+
+table,
+th,
+td {
+    border: 1px solid rgb(75, 75, 75);
+    border-collapse: collapse;
+}
+
+tr {
+    height: 33px;
+}
+
+table {
+    margin: 0px;
+}
+
+.sign {
+    color: #f4a742;
+    font-family: 'AlphaSmart3000', bold;
+    font-size: 120%;
+    text-align: center;
+}
+
+.dd {
+    width: 200px;
+    text-align: left;
+}
+
+blink {
+    animation: blinker 1s linear infinite;
+}
+
+h1 {
+    color: #f4a742;
+    font-family: 'AlphaSmart3000', bold;
+    font-size: 280%;
+    margin-bottom: 0px;
+}
+
+.xD {
+    /* TUTAJ COŚ MOGĘ WSTAWIĆ */
+}
+
+a {
+    color: #f4a742;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #f4a742;
+    text-decoration: none;
+}
+
+select {
+    margin: 50px;
+    overflow: hidden;
+    color: #f4a742;
+    font-family: 'AlphaSmart3000', bold;
+    background-color: black;
+    padding: 5px 35px 5px 5px;
+    font-size: 32px;
+    text-align: center;
+    border: 1px solid rgb(75, 75, 75);
+    height: 50px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    text-align: center;
+    text-align-last: center;
+    background: url(arrow.png) 100% / 7% no-repeat;
+}
+
+#busy {
+    display: none;
+}
+
+marquee {
+    color: #f4a742;
+    width: 500px;
+    margin: auto;
+    background-color: rgb(29, 29, 29);
+    border-radius: 3px;
+}
+
+.qwe {
+    text-align: right;
+    padding-right: 5px;
+}
+
+#ajaxContainer {
+    background-color: rgba(17, 17, 17, .5);
+    width: 800px;
+    border-radius: 20px;
+    padding-bottom: 20px;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.usb:before {
+    content: url("USB.png");
+    float: left;
+    margin-left: -2px;
+}
+
+.nullu:before {
+    content: url("null.png");
+    float: left;
+    margin-left: -2px;
+}
+
+.nullk:after {
+    content: url("null.png");
+    float: right;
+}
+
+.klima:after {
+    content: url("Klima.png");
+    float: right;
+}
+
+.bus {
+    width: 100px;
+}
+
+img {
+    height: 50px;
+    width: 50px;
+}
+
+#refresh {
+    position: fixed;
+    bottom: 50px;
+    right: 50px;
+    height: 50px;
+    width: 50px;
+}
+
+#refresh:hover {
+    cursor: pointer;
+}
