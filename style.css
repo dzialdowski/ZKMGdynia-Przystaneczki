@@ -9,7 +9,6 @@
     src: local("AlphaSmart3000"), local("AlphaSmart3000"), url(AlphaSmart3000.ttf);
     font-weight: bold;
 }
-
 body {
     background-color: black;
     color: rgb(216, 216, 216);
@@ -52,18 +51,30 @@ h1 {
     font-size: 280%;
     margin-bottom: 0px;
 }
+h2 {
+    color: #f4a742;
+}
+.green{
+    color: #009900;
+}
 
 .xD {
-    /* TUTAJ COŚ MOGĘ WSTAWIĆ */
+    /* DO DEBUGA */
+    display: none;
+}
+#lel{
+    display:none;
 }
 
 a {
     color: #f4a742;
+    font-family: 'AlphaSmart3000', bold;
     text-decoration: none;
 }
 
 a:hover {
     color: #f4a742;
+    font-family: 'AlphaSmart3000', bold;
     text-decoration: none;
 }
 
@@ -143,15 +154,66 @@ img {
     height: 50px;
     width: 50px;
 }
-
-#refresh {
-    position: fixed;
-    bottom: 50px;
-    right: 50px;
-    height: 50px;
-    width: 50px;
+@keyframes rotate{
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
-
-#refresh:hover {
-    cursor: pointer;
+option {
+    background-color: rgb(29, 29, 29);
+    text-align: center;
+}
+#refr{
+    position: fixed;
+    bottom: 5px;
+    right: 5px;
+    height: 10vw;
+    width: 10vw;
+    font-size: 6vw;
+    line-height: 10vw;
+    text-align: center;
+    background-color: #009900;
+    border-radius: 5vw 5vw 5vw 5vw;
+    animation-name: rotate;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+#telegram{
+    color: black;
+    background-color: #009900;
+    width: 800px;
+    border-radius: 15px 15px 15px 15px;
+}
+@media (pointer: coarse) {
+    body {
+        margin: 0 0 0 0;
+        padding: 0 0 0 0;
+    }
+    select {
+        height: 200px;
+    }
+    table {
+        font-size: 120%;
+    }
+    #rozklad {
+        margin: 0 0 0 0;
+        padding: 0 0 0 0;
+    }
+    #ajaxContainer {
+        width: 90vw;
+        margin: 0 0 0 0;
+        padding: 0 0 0 0;
+    }
+    .dd {
+        width: 240px;
+        text-align: left;
+        white-space: nowrap;
+    }
+    .min {
+        width: 1%;
+        white-space: nowrap;
+    }
+    #telegram{
+        width: 90vw;
+    }
 }

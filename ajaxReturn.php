@@ -1,36 +1,28 @@
 <?php 
+$con=new PDO("sqlsrv:Server = serwer,1433; Database = komunikacjamiejska", "", "");
 error_reporting(0);
 function getNormalnaNazwa($routeID){
-    $con=mysqli_connect("localhost", "root", "", "komunikacjamiejska");
-    if (mysqli_connect_errno()) {
-        echo "<script>console.log('Połączenie z bazą danych nieudane: '" . mysqli_connect_error() . ");</script>";
-    }
-    $query="SELECT NrBusa FROM Linie WHERE routeID=$routeID";//tabelę można wygenerowac korzystając z pliku Linie.php
-    $result = mysqli_query($con, $query);
-    $row=mysqli_fetch_assoc($result);
-    if($row['NrBusa']==NULL){
+    $query="SELECT [NrBusa] FROM [dbo].[linie] WHERE [routeID]=$routeID";
+    $result=$con->query($query);
+    $row=$result->fetchAll(PDO::FETCH_ASSOC);
+    if($row[0]['NrBusa']==NULL){
         return ltrim(substr($routeID, 1), '0');
     }else{
-        return $row['NrBusa'];
+        return $row[0]['NrBusa'];
     }
-    mysqli_close($con);
     
 }
 function getPojazd($BusId){
-    $con=mysqli_connect("localhost", "root", "", "komunikacjamiejska");
-    if (mysqli_connect_errno()) {
-        echo "<script>console.log('Połączenie z bazą danych nieudane: '" . mysqli_connect_error() . ");</script>";
-    }
     $class="bus ";
-    $query="SELECT * FROM busy WHERE Bus=$BusId"; // tabelę można wygenerowac korzystając z plikow w folderze busy
-    $result = mysqli_query($con, $query);
-    $row=mysqli_fetch_assoc($result);
-    if($row['USB']==1){
+    $query="SELECT * FROM [dbo].[busy] WHERE [Bus]=$BusId";
+    $result=$con->query($query);
+    $row=$result->fetchAll(PDO::FETCH_ASSOC);
+    if($row[0]['USB']==1){
         $class .="USB ";
     }else{
         $class .="nullu ";
     }
-    if($row['KLIMA']==1){
+    if($row[0]['KLIMA']==1){
         $class .="Klima";
     }else{
         $class .="nullk";
@@ -42,7 +34,15 @@ function getBus($StopId){
     $str = file_get_contents("http://87.98.237.99:88/delays?stopId={$StopId}");
     $json = json_decode($str, true);
     if(empty($json['delay'])) {
-        echo "<h2><marquee>W najbliższym czasie na danym przystanku nic nie będzie jechać</marquee></h2>";
+        $str = file_get_contents("http://87.98.237.99:88/delays?stopId={$StopId}");
+        $json = json_decode($str, true);
+        if(empty($json['delay'])) {
+            echo "<h2><marquee>W najbliższym czasie na danym przystanku nic nie będzie jechać</marquee></h2>";
+            echo "<div class='XD'>";
+            echo $str;
+            echo "</div>";
+    		echo "<div class='sign'>Data aktualizacji danych: ". $json['lastUpdate'] ."</div>";
+        }
     }
     else {
         echo "
@@ -63,32 +63,54 @@ function getBus($StopId){
         echo "<br>";
         $iloscBusow=0;
         foreach ($json['delay'] as $row) {
+            $czas=$row['delayInSeconds'];
+            settype($czas, "integer");
+            $sekundy = $czas%60;
+            $minuty = $czas/60;
+            settype($delay, "string");
+            settype($minuty, "integer");
+            if($minuty>0){
+                $delay="<td class='min'>".$minuty ."min ". $sekundy;
+            }else if($czas<0){
+                $delay="<td class='min green'>". -$czas;
+            }
+            else{
+                $delay="<td class='min'>".$sekundy;
+            }
+            $godzina=explode(":",$row['theoreticalTime']);
+            $czasEstymowany= mktime($godzina[0],$godzina[1], 0, date("m"), date("d"), date("Y"));
+            $czasEstymowany= date("Y-m-d H:i:s",$czasEstymowany);
+            $czasEstymowany= new DateTime($czasEstymowany, new DateTimeZone("Europe/Warsaw"));
+            $czasEstymowany->modify("+".$row['delayInSeconds']." seconds");
             $bus=$row['vehicleCode'];
             echo "<tr>";
-            echo "<td class='sign qwe'>". getNormalnaNazwa($row['routeId']) ."</td>"; 
-            echo "<td class='sign dd'>". $row['headsign'] ."</td>";
-            echo '<td id="czas'. $iloscBusow .'" class="sign qwe"></td>';
-            echo '<td id="czasT'. $iloscBusow .'">'. $row['estimatedTime'] .'</td>';
-            echo "<td>". $row['theoreticalTime'] ."</td>";
-            echo "<td>". $row['delayInSeconds'] ."s</td>";
+            echo "<td class='sign qwe'><a href=http://www2.zkmgdynia.pl/index_rozklady.php?linia=". getNormalnaNazwa($row['routeId']) . ">". getNormalnaNazwa($row['routeId']) ."</a></td>"; 
+            echo "<td class='sign dd'><a href=Trasa.php?routeID=". $row['routeId'] . "&tripID=" . $row['tripId'] . "&trip=" . $row['trip'] .">". $row['headsign'] ."</a></td>";
+            echo '<td id="czas'. $iloscBusow .'" class="sign qwe min"></td>';
+            echo '<td class="min" id="czasT'. $iloscBusow .'">'. $czasEstymowany->format("H:i:s") .'</td>';
+            echo "<td class='min'>". $row['theoreticalTime'] ."</td>";
+            echo  $delay ."s</td>";
             echo getPojazd($bus);
             echo "</tr>"; 
             $iloscBusow++;
         }
         echo "</table>";
+		echo "<br/><div class='sign'>Data aktualizacji danych:<br/>". $json['lastUpdate'] ."</div>";
         echo "<div id=busy>". $iloscBusow ."</div></div>";
     }
 }
-
-
-
-if ((!isset($_POST) || empty($_POST))){
-    echo "Brak danych do wyświetlenia -> Nie podano informacji o przystanku";
+if (!isset($_POST) || empty($_POST)){
+	if (!isset($_GET) || empty($_GET)){
+		echo "Brak danych do wyświetlenia -> Nie podano informacji o przystanku";
+	}
+	else{
+		$przystanek=$_GET['PrzystanekID'];
+		getBus($przystanek);
+	} 
 }
 else{
     $przystanek=$_POST['PrzystanekID'];
     getBus($przystanek);
-    
 }
 
 ?>

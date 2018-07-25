@@ -1,8 +1,7 @@
 <?php 
-$con=mysqli_connect("localhost", "root", "", "komunikacjamiejska"); //Połączenie z bazą danych
-if (mysqli_connect_errno()) {
-    echo "<script>console.log('Połączenie z bazą danych nieudane: '" . mysqli_connect_error() . ");</script>";
-}//rezygnuję z informacji o udanym połączeniu, informacja zbędna
+
+//PHP & MySQL init
+$con=new PDO("sqlsrv:Server = serwer,1433; Database = komunikacjamiejska", "", ""); //Połączenie z bazą danych
 ?>
 <html>
     <head>
@@ -43,14 +42,22 @@ if (mysqli_connect_errno()) {
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <link href="select2.css" rel="stylesheet" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
-        
+        <script type="text/javascript">
+		  var appInsights=window.appInsights||function(a){
+			function b(a){c[a]=function(){var b=arguments;c.queue.push(function(){c[a].apply(c,b)})}}var c={config:a},d=document,e=window;setTimeout(function(){var b=d.createElement("script");b.src=a.url||"https://az416426.vo.msecnd.net/scripts/a/ai.0.js",d.getElementsByTagName("script")[0].parentNode.appendChild(b)});try{c.cookie=d.cookie}catch(a){}c.queue=[];for(var f=["Event","Exception","Metric","PageView","Trace","Dependency"];f.length;)b("track"+f.pop());if(b("setAuthenticatedUserContext"),b("clearAuthenticatedUserContext"),b("startTrackEvent"),b("stopTrackEvent"),b("startTrackPage"),b("stopTrackPage"),b("flush"),!a.disableExceptionTracking){f="onerror",b("_"+f);var g=e[f];e[f]=function(a,b,d,e,h){var i=g&&g(a,b,d,e,h);return!0!==i&&c["_"+f](a,b,d,e,h),i}}return c
+			}({
+				instrumentationKey:"83cdd0f3-b6a0-4dd7-9b0f-d6a4c6066f2c"
+			});
+    
+		  window.appInsights=appInsights,appInsights.queue&&0===appInsights.queue.length&&appInsights.trackPageView();
+		</script>
     </head>    
     <body>
         <script>         
             function change(x){
                 $.post("ajaxReturn.php",
                 {
-                    PrzystanekID: x //Wyślij request o rozkład jazdy dla przystanku x
+                    PrzystanekID: x //Wyślij request o rozkład jazyd dla przystanku x
                 },
                 function(data, status){
                         $("#rozklad").html(data).slideDown(1000);
@@ -70,17 +77,22 @@ if (mysqli_connect_errno()) {
                     myChange();
                 });
             });
+
+            $( "body" ).click(function() {
+                myChange();
+            });
         </script>
         <center>
         <header>
-            <h1>PRZYSTANECZKI ZKM</h1>
+            <h1><a href="https://vanco.azurewebsites.net/komunikacja" />PRZYSTANECZKI ZKM</a></h1>
         </header>
         
         <select id="mySelect" onchange="myChange()">
 
-        <?php 
-            $result = mysqli_query($con, "SELECT * FROM Przystanki ORDER BY nazwaPrzystanku"); //Wyślij zapytanie do bazy danych o listę przystanków
-            while ($row = mysqli_fetch_array($result)) { //tabelę można wygenerowac korzystając z pliku Linie.php
+        <?php
+			$query= "SELECT * FROM [dbo].[przystanki] ORDER BY [nazwaPrzystanku]";
+            $result=$con->query($query); //Wyślij zapytanie do bazy danych o listę przystanków
+            while ($row = $result->fetch(PDO::FETCH_BOTH)) {
                 echo "<option value=" . $row['idPrzystanku'] . ">" . $row['nazwaPrzystanku'] . "</option>"; //Wypisz opcje dla każdego przystanku w bazie danych
             }
         ?>
