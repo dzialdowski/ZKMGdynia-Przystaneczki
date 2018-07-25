@@ -95,13 +95,6 @@
             $( "#refr" ).click(function() {
                 myChange();
             });
-            function nazi(){
-                if(document.getElementById("refr").innerHTML=="卐"){
-                    document.getElementById("refr").innerHTML="&#8635";
-                }else{
-                    document.getElementById("refr").innerHTML="卐";
-                }
-            };
         </script>
         <center>
         <header>
